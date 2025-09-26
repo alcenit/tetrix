@@ -2,14 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+
+
 package com.cenit.tetris1.view;
-
-
 
 import com.cenit.tetris1.model.Board;
 import com.cenit.tetris1.model.Tetromino;
 import com.cenit.tetris1.model.Cell;
 import com.cenit.tetris1.model.GameState;
+import java.util.Random;
+import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -26,6 +28,10 @@ public class BoardView extends Canvas {
     private final Board board;
     private final int cellSize;
     
+    // Animación
+    private AnimationTimer gameOverAnimation;
+    private final Random random = new Random();
+    
     // Colores basados en el CSS proporcionado
     private final Color backgroundColor = Color.web("#2b2b2b");
     private final Color cellEmptyColor = Color.web("#333333");
@@ -41,7 +47,14 @@ public class BoardView extends Canvas {
     private final Color colorT = Color.web("#9C27B0"); // Purple
     private final Color colorZ = Color.web("#F44336"); // Red
     
-    public BoardView(Board board, int cellSize,GameState gameState) {
+    
+    /*parametros seteables de animacion de gameover
+    double shakeX = (random.nextDouble() - 0.5) * 4;  // Intensidad horizontal
+    double shakeY = (random.nextDouble() - 0.5) * 3;  // Intensidad vertical
+    double pulse = Math.sin(elapsedSeconds * 5) * 0.1 + 0.9; // Velocidad de pulso
+    */
+    
+    public BoardView(Board board, int cellSize, GameState gameState) {
         this.board = board;
         this.cellSize = cellSize;
         this.gameState = gameState;
@@ -54,6 +67,8 @@ public class BoardView extends Canvas {
         
         // Aplicar estilo CSS al canvas (para el borde y efectos externos)
         getStyleClass().add("board-panel");
+        
+        System.out.println("✅ BoardView creado - GameState: " + (gameState != null ? "OK" : "NULL"));
     }
     
     public void setPaused(boolean paused) {
@@ -63,7 +78,14 @@ public class BoardView extends Canvas {
     
     public void setGameOver(boolean gameOver) {
         this.isGameOver = gameOver;
-        render();
+        if (gameOver) {
+            System.out.println("🎮 Activando Game Over con animación shake");
+            render(); // Dibujar frame inicial
+            startShakeAnimation();
+        } else {
+            stopGameOverAnimation();
+            render(); // Volver a dibujo normal
+        }
     }
     
     public void setCurrentPiece(Tetromino piece) {
@@ -84,14 +106,115 @@ public class BoardView extends Canvas {
         drawGrid(gc);
         
         if (isGameOver) {
-            drawGameOverMessage(gc);
+            // Si hay animación activa, no dibujar estático
+            if (gameOverAnimation == null) {
+                drawGameOverFrame(gc, 0, 0); // Frame inicial
+            }
         } else if (isPaused) {
             drawPauseMessage(gc);
         }
     }
     
+    // ===== ANIMACIÓN SHAKE =====
+    private void startShakeAnimation() {
+        // Detener animación anterior si existe
+        stopGameOverAnimation();
+        
+        final long startTime = System.nanoTime();
+        
+        gameOverAnimation = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                double elapsedSeconds = (now - startTime) / 1_000_000_000.0;
+                
+                // Efecto de temblor aleatorio más suave
+                double shakeX = (random.nextDouble() - 0.5) * 4; // Reducido a 4px máximo
+                double shakeY = (random.nextDouble() - 0.5) * 3; // Reducido a 3px máximo
+                
+                // Añadir efecto de pulso al shake
+                double pulse = Math.sin(elapsedSeconds * 5) * 0.1 + 0.9;
+                
+                drawShakeEffect(shakeX, shakeY, pulse, elapsedSeconds);
+            }
+        };
+        
+        gameOverAnimation.start();
+        System.out.println("🌀 Animación shake iniciada");
+    }
+    
+    private void stopGameOverAnimation() {
+        if (gameOverAnimation != null) {
+            gameOverAnimation.stop();
+            gameOverAnimation = null;
+            System.out.println("⏹️ Animación shake detenida");
+        }
+    }
+    
+    private void drawShakeEffect(double shakeX, double shakeY, double pulse, double time) {
+        GraphicsContext gc = getGraphicsContext2D();
+        
+        // Limpiar solo el área del mensaje para mejor rendimiento
+        gc.clearRect(0, getHeight() / 2 - 100, getWidth(), 200);
+        
+        // Redibujar el tablero de fondo
+        drawBoard(gc);
+        drawGrid(gc);
+        
+        // Fondo semitransparente para el mensaje
+        gc.setFill(Color.rgb(0, 0, 0, 0.85));
+        gc.fillRect(0, getHeight() / 2 - 100, getWidth(), 200);
+        
+        // Sombra que tiembla
+        gc.setFill(Color.rgb(244, 67, 54, 0.3));
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 52));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.fillText("GAME OVER", getWidth() / 2 + 2 + shakeX, getHeight() / 2 - 48 + shakeY);
+        
+        // Texto principal que también tiembla ligeramente con efecto de pulso
+        gc.setFill(Color.web("#F44336"));
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 48));
+        gc.setGlobalAlpha(pulse); // Efecto de pulso
+        gc.fillText("GAME OVER", getWidth() / 2 + shakeX * 0.7, getHeight() / 2 - 50 + shakeY * 0.7);
+        gc.setGlobalAlpha(1.0); // Restaurar opacidad
+        
+        drawGameOverInfo(gc);
+    }
+    
+    private void drawGameOverFrame(GraphicsContext gc, double shakeX, double shakeY) {
+        // Fondo semitransparente
+        gc.setFill(Color.rgb(0, 0, 0, 0.85));
+        gc.fillRect(0, getHeight() / 2 - 100, getWidth(), 200);
+        
+        // Sombra
+        gc.setFill(Color.rgb(244, 67, 54, 0.3));
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 52));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.fillText("GAME OVER", getWidth() / 2 + 2 + shakeX, getHeight() / 2 - 48 + shakeY);
+        
+        // Texto principal
+        gc.setFill(Color.web("#F44336"));
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 48));
+        gc.fillText("GAME OVER", getWidth() / 2 + shakeX * 0.7, getHeight() / 2 - 50 + shakeY * 0.7);
+        
+        drawGameOverInfo(gc);
+    }
+    
+    private void drawGameOverInfo(GraphicsContext gc) {
+        gc.setFill(Color.WHITE);
+        gc.setFont(Font.font("Arial", FontWeight.NORMAL, 18));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.fillText("Presiona ESC para volver al menú", getWidth() / 2, getHeight() / 2 + 20);
+        
+        gc.setFill(Color.web("#4CAF50"));
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        
+        int score = getSafeScore();
+        gc.fillText("Puntuación: " + score, getWidth() / 2, getHeight() / 2 + 60);
+    }
+    
+    // ===== MÉTODOS DE DIBUJO DEL TABLERO =====
     private void drawBoard(GraphicsContext gc) {
-        // Fondo general del tablero (usando color del CSS)
+        // Fondo general del tablero
         gc.setFill(backgroundColor);
         gc.fillRect(0, 0, getWidth(), getHeight());
         
@@ -125,15 +248,15 @@ public class BoardView extends Canvas {
         gc.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
         
         // Efecto de luz (highlight) más suave
-        gc.setStroke(cssColor.deriveColor(0, 1.0, 1.3, 1.0)); // Más brillante
+        gc.setStroke(cssColor.deriveColor(0, 1.0, 1.3, 1.0));
         gc.setLineWidth(1.0);
-        gc.strokeLine(x + 1, y + 1, x + cellSize - 1, y + 1); // Superior
-        gc.strokeLine(x + 1, y + 1, x + 1, y + cellSize - 1); // Izquierdo
+        gc.strokeLine(x + 1, y + 1, x + cellSize - 1, y + 1);
+        gc.strokeLine(x + 1, y + 1, x + 1, y + cellSize - 1);
         
         // Efecto de sombra más suave
-        gc.setStroke(cssColor.deriveColor(0, 1.0, 0.7, 1.0)); // Más oscuro
-        gc.strokeLine(x + cellSize - 1, y + 1, x + cellSize - 1, y + cellSize - 1); // Derecho
-        gc.strokeLine(x + 1, y + cellSize - 1, x + cellSize - 1, y + cellSize - 1); // Inferior
+        gc.setStroke(cssColor.deriveColor(0, 1.0, 0.7, 1.0));
+        gc.strokeLine(x + cellSize - 1, y + 1, x + cellSize - 1, y + cellSize - 1);
+        gc.strokeLine(x + 1, y + cellSize - 1, x + cellSize - 1, y + cellSize - 1);
         
         // Borde interior negro para definición
         gc.setStroke(Color.rgb(0, 0, 0, 0.3));
@@ -151,7 +274,7 @@ public class BoardView extends Canvas {
                     int x = piece.getX() + j;
                     int y = piece.getY() + i;
                     
-                    if (y >= 0) { // Solo dibujar si está en área visible
+                    if (y >= 0) {
                         drawPieceCell(gc, cssColor, x, y);
                     }
                 }
@@ -207,13 +330,13 @@ public class BoardView extends Canvas {
         gc.fillRect(0, 0, getWidth(), getHeight());
         
         // Sombra para el texto
-        gc.setFill(Color.rgb(255, 193, 7, 0.3)); // Amarillo oscuro
+        gc.setFill(Color.rgb(255, 193, 7, 0.3));
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 52));
         gc.setTextAlign(TextAlignment.CENTER);
         gc.fillText("PAUSA", getWidth() / 2 + 2, getHeight() / 2 - 28);
         
         // Texto principal de pausa
-        gc.setFill(Color.web("#FFC107")); // Amarillo del CSS
+        gc.setFill(Color.web("#FFC107"));
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 48));
         gc.fillText("PAUSA", getWidth() / 2, getHeight() / 2 - 30);
         
@@ -223,36 +346,8 @@ public class BoardView extends Canvas {
         gc.fillText("Presiona P para continuar", getWidth() / 2, getHeight() / 2 + 30);
     }
     
-    private void drawGameOverMessage(GraphicsContext gc) {
-        // Fondo semitransparente
-        gc.setFill(Color.rgb(0, 0, 0, 0.9));
-        gc.fillRect(0, 0, getWidth(), getHeight());
-        
-        // Sombra para el texto
-        gc.setFill(Color.rgb(244, 67, 54, 0.3)); // Rojo oscuro
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 52));
-        gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText("GAME OVER", getWidth() / 2 + 2, getHeight() / 2 - 48);
-        
-        // Texto principal de Game Over
-        gc.setFill(Color.web("#F44336")); // Rojo del CSS
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 48));
-        gc.fillText("GAME OVER", getWidth() / 2, getHeight() / 2 - 50);
-        
-        // Instrucciones
-        gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial", FontWeight.NORMAL, 18));
-        gc.fillText("Presiona ESC para volver al menú", getWidth() / 2, getHeight() / 2 + 20);
-        
-       
-            gc.setFill(Color.web("#4CAF50")); // Verde
-            gc.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-            gc.fillText("Puntuación: " + getScore(gameState), getWidth() / 2, getHeight() / 2 + 60);
-        
-    }
-    
+    // ===== MÉTODOS AUXILIARES =====
     private Color getCSSColor(Color originalColor) {
-        // Mapear colores estándar a los colores del CSS
         if (originalColor.equals(Color.CYAN)) return colorI;
         if (originalColor.equals(Color.BLUE)) return colorJ;
         if (originalColor.equals(Color.ORANGE)) return colorL;
@@ -260,27 +355,22 @@ public class BoardView extends Canvas {
         if (originalColor.equals(Color.GREEN)) return colorS;
         if (originalColor.equals(Color.PURPLE)) return colorT;
         if (originalColor.equals(Color.RED)) return colorZ;
-        
-        // Si no coincide, usar el color original
         return originalColor;
     }
-    /*
-    public void updateGameInfo(GameState gameState) {
-        scoreLabel.setText("Puntos: " + gameState.getScore());
-        levelLabel.setText("Nivel: " + gameState.getLevel());
-        linesLabel.setText("Líneas: " + gameState.getLines());
-    }*/
     
-    private int getScore(GameState gameState) {
-        int score =0;
-        // Método para obtener la puntuación actual 
-                  
-           // obtener score de gamState
-           score =  gameState.getScore();
-         // System.out.println("getScore  "+gameState.getScore());
-            
+    private int getSafeScore() {
+        if (gameState == null) {
+            System.out.println("⚠️ GameState es null, usando puntuación 0");
+            return 0;
+        }
         
-       return score; 
+        try {
+            int score = gameState.getScore();
+            return score;
+        } catch (Exception e) {
+            System.err.println("❌ Error obteniendo puntuación: " + e.getMessage());
+            return 0;
+        }
     }
     
     public void clear() {
@@ -301,12 +391,15 @@ public class BoardView extends Canvas {
         render();
     }
     
-    // Método para cambiar el tamaño dinámicamente (si es necesario)
+    // Método para cambiar el tamaño dinámicamente
     public void resize(int newCellSize) {
-        // No se puede cambiar el cellSize una vez creado, 
-        // pero se puede redimensionar el canvas
         setWidth(board.getWidth() * newCellSize);
         setHeight(board.getHeight() * newCellSize);
         render();
+    }
+    
+    // Método para limpiar recursos cuando se cierra la aplicación
+    public void cleanup() {
+        stopGameOverAnimation();
     }
 }

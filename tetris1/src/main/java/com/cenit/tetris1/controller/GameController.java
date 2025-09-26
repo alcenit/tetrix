@@ -56,8 +56,11 @@ public class GameController {
         public void handle(long now) {
             if (gameEngine.getGameState().isGameOver()) {
                 // Solo actualizamos la vista para que BoardView dibuje el game over
+                
                 updateView();
                 stopGame();
+                //activa la animacion de gameover
+                boardView.setGameOver(true);
                 return;
             }
 
@@ -77,6 +80,9 @@ public class GameController {
             }
         }
     };
+    //desactiva la animacion de gameOver    
+    boardView.setGameOver(false);
+    //vuelve a imniciar el loop 
     gameLoop.start();
         
         

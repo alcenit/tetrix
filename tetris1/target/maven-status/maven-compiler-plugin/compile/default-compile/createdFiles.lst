@@ -4,6 +4,7 @@ com\cenit\tetris1\model\Cell.class
 com\cenit\tetris1\view\GameView.class
 com\cenit\tetris1\PrimaryController.class
 com\cenit\tetris1\model\GameState.class
+com\cenit\tetris1\view\BoardView$1.class
 com\cenit\tetris1\util\GameConstants.class
 com\cenit\tetris1\controller\GameController$2.class
 com\cenit\tetris1\view\StartMenuView.class
