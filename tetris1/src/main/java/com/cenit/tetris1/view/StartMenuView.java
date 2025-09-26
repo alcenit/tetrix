@@ -36,23 +36,23 @@ public class StartMenuView extends VBox{
         setBackground(new Background(new BackgroundFill(Color.rgb(30, 30, 50), CornerRadii.EMPTY, Insets.EMPTY)));
         
         // Título del juego
-        Label titleLabel = new Label("TETRIS");
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 48));
+        Label titleLabel = new Label("SUPER TETRIS");
+        titleLabel.setFont(Font.font("Raleway", FontWeight.BOLD, 48));
         titleLabel.setTextFill(Color.WHITE);
         
         // Botón de inicio
         startButton = new Button("Iniciar Juego");
-        startButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        startButton.setFont(Font.font("Raleway", FontWeight.BOLD, 20));
         startButton.setMinWidth(200);
         startButton.setMinHeight(50);
-        startButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+        startButton.setStyle("-fx-background-color: #9BABBE; -fx-text-fill: white;");
         
         // Botón de salida
         exitButton = new Button("Salir");
-        exitButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        exitButton.setFont(Font.font("Raleway", FontWeight.BOLD, 20));
         exitButton.setMinWidth(200);
         exitButton.setMinHeight(50);
-        exitButton.setStyle("-fx-background-color: #F44336; -fx-text-fill: white;");
+        exitButton.setStyle("-fx-background-color: #9BABBE; -fx-text-fill: white;");
         
         getChildren().addAll(titleLabel, startButton, exitButton);
     }

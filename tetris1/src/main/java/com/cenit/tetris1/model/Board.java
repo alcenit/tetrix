@@ -4,6 +4,7 @@
  */
 package com.cenit.tetris1.model;
 
+import com.cenit.tetris1.util.GameConstants;
 import javafx.scene.paint.Color;
 
 /**
@@ -12,27 +13,29 @@ import javafx.scene.paint.Color;
  */
 public class Board {
     
-    private static final int WIDTH = 10;
-    private static final int HEIGHT = 20;
-    
+    private final int width;
+    private final int height;
     private Cell[][] grid;
     
     public Board() {
-        grid = new Cell[HEIGHT][WIDTH];
-        initialize();
+        this.width = GameConstants.BOARD_WIDTH;
+        this.height = GameConstants.BOARD_HEIGHT;
+        this.grid = new Cell[height][width];
+        initializeBoard();
     }
     
-    private void initialize() {
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH; j++) {
-                grid[i][j] = new Cell();
+    public int getWidth() { return width; }
+    public int getHeight() { return height; }
+    // public Cell[][] getGrid() { return grid; }
+    public Cell getCell(int row, int col) { return grid[row][col]; }
+    private void initializeBoard() {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                grid[i][j] = new Cell(); 
             }
         }
     }
-    
-    public int getWidth() { return WIDTH; }
-    public int getHeight() { return HEIGHT; }
-    public Cell getCell(int row, int col) { return grid[row][col]; }
+     
     
     public boolean isValidPosition(Tetromino piece, int x, int y) {
         int[][] matrix = piece.getMatrix();
@@ -43,7 +46,7 @@ public class Board {
                     int boardX = x + j;
                     int boardY = y + i;
                     
-                    if (boardX < 0 || boardX >= WIDTH || boardY >= HEIGHT) {
+                    if (boardX < 0 || boardX >= width || boardY >= height) {
                         return false;
                     }
                     
@@ -87,7 +90,7 @@ public class Board {
     public int clearLines() {
         int linesCleared = 0;
         
-        for (int i = HEIGHT - 1; i >= 0; i--) {
+        for (int i = height - 1; i >= 0; i--) {
             if (isLineComplete(i)) {
                 removeLine(i);
                 linesCleared++;
@@ -99,7 +102,7 @@ public class Board {
     }
     
     private boolean isLineComplete(int row) {
-        for (int j = 0; j < WIDTH; j++) {
+        for (int j = 0; j < width; j++) {
             if (!grid[row][j].isFilled()) {
                 return false;
             }
@@ -109,13 +112,13 @@ public class Board {
     
     private void removeLine(int row) {
         for (int i = row; i > 0; i--) {
-            for (int j = 0; j < WIDTH; j++) {
+            for (int j = 0; j < width; j++) {
                 grid[i][j] = grid[i-1][j];
             }
         }
         
         // Clear the top line
-        for (int j = 0; j < WIDTH; j++) {
+        for (int j = 0; j < width; j++) {
             grid[0][j] = new Cell();
         }
     }
@@ -123,8 +126,8 @@ public class Board {
     //metodo para debuggear
     public void printBoardState() {
     System.out.println("=== ESTADO DEL TABLERO ===");
-    for (int i = 0; i < HEIGHT; i++) {
-        for (int j = 0; j < WIDTH; j++) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
             Cell cell = getCell(i, j);
             if (cell.isFilled()) {
                 System.out.print("X ");
@@ -139,8 +142,8 @@ public class Board {
 
 public int countFilledCells() {
     int count = 0;
-    for (int i = 0; i < HEIGHT; i++) {
-        for (int j = 0; j < WIDTH; j++) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
             if (getCell(i, j).isFilled()) {
                 count++;
             }

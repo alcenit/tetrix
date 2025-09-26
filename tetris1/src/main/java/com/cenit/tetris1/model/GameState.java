@@ -24,6 +24,11 @@ public class GameState {
         this.paused = false;
     }
     
+        
+    
+    
+    
+    
     // Getters y setters
     public int getScore() { return score; }
     public void setScore(int score) { this.score = score; }
@@ -47,6 +52,13 @@ public class GameState {
     public void addLines(int lines) {
         this.lines += lines;
         this.level = (this.lines / 10) + 1;
+    }
+    
+       
+    public void reset() {
+        this.score = 0;
+        this.level = 1;
+        this.lines = 0;
     }
     
 }

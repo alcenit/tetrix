@@ -37,37 +37,45 @@ public class GameView extends BorderPane {
     }
     
     private void initializeUI() {
-        
-       
-        // Panel de información
-        VBox infoPanel = new VBox(20);
-        infoPanel.setPadding(new Insets(20));
-        infoPanel.setAlignment(Pos.TOP_CENTER);
-        
-        Label nextLabel = new Label("Siguiente:");
-        nextLabel.setFont(Font.font(16));
-        
-        scoreLabel = new Label("Puntos: 0");
-        levelLabel = new Label("Nivel: 1");
-        linesLabel = new Label("Líneas: 0");
-        
-        // Botón para volver al menú
-        menuButton = new Button("Menú Principal");
-        menuButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
-        
-        infoPanel.getChildren().addAll(nextLabel, nextPieceView, scoreLabel, levelLabel, linesLabel, menuButton);
-        
-        // Panel principal
-        HBox mainPanel = new HBox(20);
-        mainPanel.setPadding(new Insets(20));
-        mainPanel.setAlignment(Pos.CENTER);
-        mainPanel.getChildren().addAll(boardView, infoPanel);
-        
-        setCenter(mainPanel);
-        
-        // En la clase GameView, en el método initializeUI()
-         menuButton.setFocusTraversable(false); // Para que no reciba el foco
-    }
+    // Panel de información
+    VBox infoPanel = new VBox(20);
+    infoPanel.setPadding(new Insets(20));
+    infoPanel.setAlignment(Pos.TOP_CENTER);
+    infoPanel.getStyleClass().add("info-panel"); // ← Clase CSS
+    
+    Label nextLabel = new Label("Siguiente:");
+    nextLabel.getStyleClass().add("info-title"); // ← Clase CSS
+    
+    scoreLabel = new Label("Puntos: 0");
+    scoreLabel.getStyleClass().add("info-value"); // ← Clase CSS
+    
+    levelLabel = new Label("Nivel: 1");
+    levelLabel.getStyleClass().add("info-value");
+    
+    linesLabel = new Label("Líneas: 0");
+    linesLabel.getStyleClass().add("info-value");
+    
+    // Botón para volver al menú
+    menuButton = new Button("Menú Principal");
+    menuButton.getStyleClass().addAll("menu-button", "secondary-button"); // ← Múltiples clases
+    
+    infoPanel.getChildren().addAll(nextLabel, nextPieceView, scoreLabel, levelLabel, linesLabel, menuButton);
+    
+    // Panel principal
+    HBox mainPanel = new HBox(20);
+    mainPanel.setPadding(new Insets(20));
+    mainPanel.setAlignment(Pos.CENTER);
+    mainPanel.getStyleClass().add("game-container"); // ← Clase CSS
+    mainPanel.getChildren().addAll(boardView, infoPanel);
+    
+    setCenter(mainPanel);
+    
+    // En la clase GameView, en el método initializeUI()
+    menuButton.setFocusTraversable(false);
+    
+    // Aplicar estilo al root
+    getStyleClass().add("game-root"); // ← Clase CSS para el root
+}
     
     public Button getMenuButton() {
         return menuButton;

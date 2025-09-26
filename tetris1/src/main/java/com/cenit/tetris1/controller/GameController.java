@@ -5,6 +5,7 @@
 package com.cenit.tetris1.controller;
 
 import com.cenit.tetris1.App;
+import com.cenit.tetris1.model.GameState;
 import com.cenit.tetris1.service.GameEngine;
 import com.cenit.tetris1.view.BoardView;
 import com.cenit.tetris1.view.GameView;
@@ -23,22 +24,73 @@ public class GameController {
     private GameView gameView;
     private BoardView boardView;
     private AnimationTimer gameLoop;
+    private GameState gameState;
     private long lastUpdate = 0;
     
-    public GameController(GameEngine gameEngine, GameView gameView, BoardView boardView) {
+     public GameController(GameEngine gameEngine, GameView gameView, BoardView boardView, GameState gameState) {
         this.gameEngine = gameEngine;
         this.gameView = gameView;
         this.boardView = boardView;
+        this.gameState = gameState;
         
-        // En el método que maneja el botón de volver al menú
-     gameView.getMenuButton().setOnAction(e -> {
+        gameView.getMenuButton().setOnAction(e -> {
         stopGame();
         App.getInstance().showStartMenuFromGame();
       });
             
         
         initializeGameLoop();
+        
+        // Configurar listeners o inicializaciones
+        setupGameListeners();
     }
+     
+     private void setupGameListeners() {
+        // Aquí puedes configurar observadores para cambios en el GameState
+        System.out.println("🎮 GameController configurado con GameState");
+    }
+    
+    public void startGame() {
+        gameLoop = new AnimationTimer() {
+        @Override
+        public void handle(long now) {
+            if (gameEngine.getGameState().isGameOver()) {
+                // Solo actualizamos la vista para que BoardView dibuje el game over
+                updateView();
+                stopGame();
+                return;
+            }
+
+            // Si está pausado, renderizamos para mostrar el mensaje de pausa
+            if (gameEngine.getGameState().isPaused()) {
+                updateView();
+                return;
+            }
+
+            // Lógica normal del juego
+            if (now - lastUpdate >= 1_000_000_000 / getGameSpeed()) {
+                if (!gameEngine.moveDown()) {
+                    gameEngine.lockPiece();
+                }
+                updateView();
+                lastUpdate = now;
+            }
+        }
+    };
+    gameLoop.start();
+        
+        
+        System.out.println("🎯 Juego iniciado - Puntuación: " + gameState.getScore());
+    }
+    
+    // Método para actualizar la vista con la información del GameState
+    public void updateGameInfo() {
+        // Si tu GameView tiene métodos para mostrar información
+        if (gameView != null) {
+            updateView();        }
+    }
+    
+    
     
     
     private void initializeGameLoop() {
@@ -70,8 +122,8 @@ public class GameController {
     if (event.isConsumed()) {
         return;
     }
-    
-    System.out.println("Tecla recibida: " + event.getCode());
+    //
+    //System.out.println("Tecla recibida: " + event.getCode());
     
     if (gameEngine.getGameState().isGameOver()) {
         if (event.getCode() == KeyCode.ESCAPE) {
@@ -119,7 +171,7 @@ public class GameController {
     event.consume();
 }
     
-      
+   /* viejo starGame   
    public void startGame() {
     gameLoop = new AnimationTimer() {
         @Override
@@ -148,7 +200,7 @@ public class GameController {
         }
     };
     gameLoop.start();
-}
+}*/
   
 // Método para detener el juego
 public void stopGame() {

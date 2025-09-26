@@ -5,32 +5,40 @@
 package com.cenit.tetris1.view;
 
 import com.cenit.tetris1.model.Tetromino;
+import com.cenit.tetris1.util.GameConstants;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 
-/**
- *
- * @author Usuario
- */
 public class NextPieceView extends StackPane {
     
-    private static final int CELL_SIZE = 15;
-    private static final int PREVIEW_SIZE = 6; // Tamaño de la cuadrícula de preview
+    private final int cellSize;
+    private final int previewSize;
     
     private Canvas canvas;
     private Tetromino nextPiece;
     
     public NextPieceView() {
+        // Usar constantes de GameConstants
+        this.cellSize = GameConstants.CELL_SIZE /2; // Más pequeño que el tablero principal
+        this.previewSize = GameConstants.NEXT_PIECE_VIEW_SIZE;
+        
         // Crear un canvas para dibujar la pieza
-        canvas = new Canvas(PREVIEW_SIZE * CELL_SIZE, PREVIEW_SIZE * CELL_SIZE);
+        canvas = new Canvas(previewSize * cellSize, previewSize * cellSize);
         
         // Añadir el canvas al StackPane
         getChildren().add(canvas);
         
         // Estilo del panel
         setStyle("-fx-border-color: #666; -fx-border-width: 2; -fx-background-color: #222;");
+        
+        // Asegurar tamaño consistente
+        setMaxSize(previewSize * cellSize + 10, previewSize * cellSize + 10);
+        setPrefSize(previewSize * cellSize + 10, previewSize * cellSize + 10);
         
         // Dibujar un fondo inicial
         drawEmptyPreview();
@@ -39,6 +47,11 @@ public class NextPieceView extends StackPane {
     public void setNextPiece(Tetromino piece) {
         this.nextPiece = piece;
         drawNextPiece();
+    }
+    
+    public void clear() {
+        this.nextPiece = null;
+        drawEmptyPreview();
     }
     
     private void drawEmptyPreview() {
@@ -53,14 +66,23 @@ public class NextPieceView extends StackPane {
         gc.setStroke(Color.rgb(80, 80, 80));
         gc.setLineWidth(0.5);
         
-        /*
-        for (int i = 0; i <= PREVIEW_SIZE; i++) {
-            // Líneas verticales
-            gc.strokeLine(i * CELL_SIZE, 0, i * CELL_SIZE, PREVIEW_SIZE * CELL_SIZE);
-            // Líneas horizontales
-            gc.strokeLine(0, i * CELL_SIZE, PREVIEW_SIZE * CELL_SIZE, i * CELL_SIZE);
+        // Líneas verticales
+        for (int i = 0; i <= previewSize; i++) {
+            gc.strokeLine(i * cellSize, 0, i * cellSize, previewSize * cellSize);
         }
-        */
+        
+        // Líneas horizontales
+        for (int i = 0; i <= previewSize; i++) {
+            gc.strokeLine(0, i * cellSize, previewSize * cellSize, i * cellSize);
+        }
+        /*
+        // Texto "SIGUIENTE"
+        gc.setFill(Color.WHITE);
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.fillText("SIGUIENTE", canvas.getWidth() / 2, 12);
+
+          */
     }
     
     private void drawNextPiece() {
@@ -75,45 +97,33 @@ public class NextPieceView extends StackPane {
         Color color = nextPiece.getColor();
         
         // Calcular el desplazamiento para centrar la pieza en el área de preview
-        int offsetX = (PREVIEW_SIZE - matrix[0].length) / 2;
-        int offsetY = (PREVIEW_SIZE - matrix.length) / 2;
+        int offsetX = (previewSize - matrix[0].length) / 2;
+        int offsetY = (previewSize - matrix.length) / 2 + 1; // +1 para bajar un poco por el texto
         
         // Dibujar la pieza
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
                 if (matrix[i][j] != 0) {
-                    // Dibujar celda rellena
+                    double x = (offsetX + j) * cellSize;
+                    double y = (offsetY + i) * cellSize;
+                    
+                    // Dibujar celda rellena con efectos de profundidad
                     gc.setFill(color);
-                    gc.fillRect((offsetX + j) * CELL_SIZE, 
-                                (offsetY + i) * CELL_SIZE, 
-                                CELL_SIZE, CELL_SIZE);
+                    gc.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
                     
-                    // Dibujar borde de la celda
-                    gc.setStroke(Color.BLACK);
-                    gc.strokeRect((offsetX + j) * CELL_SIZE, 
-                                  (offsetY + i) * CELL_SIZE, 
-                                  CELL_SIZE, CELL_SIZE);
-                    
-                    // Añadir efecto de luz para dar profundidad
+                    // Efecto de luz (highlight) - bordes superiores e izquierdos
                     gc.setStroke(color.brighter());
-                    gc.strokeLine((offsetX + j) * CELL_SIZE, 
-                                  (offsetY + i) * CELL_SIZE, 
-                                  (offsetX + j + 1) * CELL_SIZE, 
-                                  (offsetY + i) * CELL_SIZE);
-                    gc.strokeLine((offsetX + j) * CELL_SIZE, 
-                                  (offsetY + i) * CELL_SIZE, 
-                                  (offsetX + j) * CELL_SIZE, 
-                                  (offsetY + i + 1) * CELL_SIZE);
+                    gc.strokeLine(x + 1, y + 1, x + cellSize - 1, y + 1); // Superior
+                    gc.strokeLine(x + 1, y + 1, x + 1, y + cellSize - 1); // Izquierdo
                     
+                    // Efecto de sombra - bordes inferiores y derechos
                     gc.setStroke(color.darker());
-                    gc.strokeLine((offsetX + j) * CELL_SIZE, 
-                                  (offsetY + i + 1) * CELL_SIZE, 
-                                  (offsetX + j + 1) * CELL_SIZE, 
-                                  (offsetY + i + 1) * CELL_SIZE);
-                    gc.strokeLine((offsetX + j + 1) * CELL_SIZE, 
-                                  (offsetY + i) * CELL_SIZE, 
-                                  (offsetX + j + 1) * CELL_SIZE, 
-                                  (offsetY + i + 1) * CELL_SIZE);
+                    gc.strokeLine(x + 1, y + cellSize - 1, x + cellSize - 1, y + cellSize - 1); // Inferior
+                    gc.strokeLine(x + cellSize - 1, y + 1, x + cellSize - 1, y + cellSize - 1); // Derecho
+                    
+                    // Borde exterior negro
+                    gc.setStroke(Color.BLACK);
+                    gc.strokeRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
                 }
             }
         }
@@ -122,12 +132,20 @@ public class NextPieceView extends StackPane {
     // Método para obtener el tamaño preferido
     @Override
     protected double computePrefWidth(double height) {
-        return PREVIEW_SIZE * CELL_SIZE + 10; // +10 para padding
+        return previewSize * cellSize + 10; // +10 para padding
     }
     
     @Override
     protected double computePrefHeight(double width) {
-        return PREVIEW_SIZE * CELL_SIZE + 10; // +10 para padding
+        return previewSize * cellSize + 10; // +10 para padding
     }
     
+    // Getters útiles
+    public int getCellSize() {
+        return cellSize;
+    }
+    
+    public int getPreviewSize() {
+        return previewSize;
+    }
 }

@@ -9,23 +9,45 @@ import com.cenit.tetris1.model.GameState;
 import com.cenit.tetris1.model.Tetromino;
 
 
-/**
- *
- * @author Usuario
- */
+
 public class GameEngine {
     private Board board;
-    private GameState gameState;
     private Tetromino currentPiece;
     private Tetromino nextPiece;
     
-    // Constructor modificado
-    public GameEngine(Board board) {
-        this.board = board;  // Usar la instancia proporcionada
-        this.gameState = new GameState();
+    private final GameState gameState; // ← Nueva referencia
+    
+    public GameEngine(Board board, GameState gameState) {
+        this.board = board;
+        this.gameState = gameState;
+        
+        // Inicializar gameState si es necesario
+        this.gameState.setScore(0);
+        this.gameState.setLevel(1);
+        this.gameState.setLines(0);
+        
         this.nextPiece = TetrominoFactory.createRandomTetromino();
         spawnNewPiece();
+        
+        
     }
+    // Métodos que actualizan el GameState
+    public void addScore(int points) {
+        gameState.addScore(points);
+        System.out.println("📊 Puntuación actualizada: " + gameState.getScore());
+    }
+    
+    public void addLines(int linesCleared) {
+        gameState.addLines(linesCleared);
+        // Lógica para subir nivel
+        if (gameState.getLines() >= gameState.getLevel() * 10) {
+            gameState.setLevel(gameState.getLevel() + 1);
+            System.out.println("🎯 Subió al nivel: " + gameState.getLevel());
+        }
+    }
+    
+    
+    
      public void spawnNewPiece() {
     currentPiece = nextPiece;
     nextPiece = TetrominoFactory.createRandomTetromino();
@@ -141,11 +163,7 @@ private boolean adjustPositionAfterRotation() {
     // Verificar si el juego ha terminado
     if (CollisionDetector.isGameOver(board, currentPiece)) {
         gameState.setGameOver(true);
-        System.out.println("<<<<<<<<<<<<<<<<<<------->>>>>>>>>>>>>>>>>>>>>");
-        System.out.println("<<<<<<<<<<<<<<<<<--------->>>>>>>>>>>>>>>>>>>>");
-        System.out.println("<<<<<<<<<<<<<<<< GAME OVER >>>>>>>>>>>>>>>>>>>");
-        System.out.println("<<<<<<<<<<<<<<<<<--------->>>>>>>>>>>>>>>>>>>>");
-        System.out.println("<<<<<<<<<<<<<<<<<<------->>>>>>>>>>>>>>>>>>>>>");
+        
     }
     
     return linesCleared > 0;

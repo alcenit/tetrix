@@ -1,69 +1,410 @@
-/*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
-*/
-/* tetris.css - Estilos para el juego Tetris */
+/* style.css - Estilos completos para el juego Tetris */
 
-/* Estilo para el fondo principal */
+/* ===== ESTILOS GENERALES ===== */
 .root {
-    -fx-background-color: #2b2b2b;
-    -fx-font-family: 'arial';
+    -fx-font-family: "Arial";
+    -fx-background-color: #1a1a1a;
 }
 
-/* Estilo para etiquetas */
-.label {
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-}
-
-/* Estilo para botones */
-.button {
-    -fx-background-color: #4a4a4a;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-border-color: #666666;
-    -fx-border-width: 2px;
-}
-
-/* Estilo para paneles de información */
-.info-panel {
-    -fx-border-color: #666666;
-    -fx-border-width: 2px;
-    -fx-background-color: #3a3a3a;
-    -fx-padding: 10px;
-}
-
-/* Estilo para el área del tablero */
-.board-area {
-    -fx-border-color: #444444;
-    -fx-border-width: 2px;
-    -fx-background-color: #333333;
-}
-
-
-/* Estilos para el menú de inicio */
-.menu-button {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-padding: 10px 20px;
-    -fx-background-radius: 5px;
-    -fx-border-radius: 5px;
-}
-
-.menu-button:hover {
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
-}
-
-.menu-button:pressed {
-    -fx-scale-x: 0.95;
-    -fx-scale-y: 0.95;
+/* ===== ESTILOS DEL MENÚ DE INICIO ===== */
+.start-menu-container {
+    -fx-background-color: linear-gradient(to bottom, #2b2b2b, #1a1a1a);
+    -fx-padding: 40px;
+    -fx-alignment: center;
+    -fx-spacing: 20px;
 }
 
 .game-title {
-    -fx-font-size: 48px;
+    -fx-text-fill: linear-gradient(to bottom, #1e4d77, #0888fa);
+    -fx-font-size: 36px;
     -fx-font-weight: bold;
-    -fx-text-fill: linear-gradient(from 0% 0% to 100% 100%, #ff7e5f, #feb47b);
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(162, 203, 239, 0.5), 15, 0.5, 0, 0);
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease;
 }
 
+.game-title:hover {
+    -fx-text-fill: #4CAF50;
+    -fx-font-family:  "Meiryo", "Hiragino Sans", "Osaka", "Arial";
+    -fx-font-size: 42px; /* Cambiado de 45px a 38px para mejor proporción */
+    -fx-font-weight: bold;    
+    -fx-effect: dropshadow(gaussian, rgba(76, 175, 80, 0.8), 20, 0.7, 0, 0);
+    -fx-rotate: 3;
+}
+            /*  botones*/
+.buttons-container {
+    -fx-spacing: 15px;
+    -fx-alignment: center;
+    -fx-padding: 20px 0px 30px 0px;
+}
+
+.menu-button {
+    -fx-pref-width: 200px;
+    -fx-pref-height: 45px;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0.2, 0, 2);
+    -fx-transition: all 0.2s ease;
+}
+
+.menu-button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0.3, 0, 4);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.menu-button:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+.start-button {
+    -fx-background-color: linear-gradient(to bottom, #4CAF50, #45a049);
+    -fx-text-fill: white;
+    -fx-border-color: #388E3C;
+    -fx-border-width: 2px;
+}
+
+.start-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #45a049, #3d8b40);
+    -fx-border-color: #2E7D32;
+}
+
+.exit-button {
+    -fx-background-color: linear-gradient(to bottom, #f44336, #d32f2f);
+    -fx-text-fill: white;
+    -fx-border-color: #d32f2f;
+    -fx-border-width: 2px;
+}
+
+.exit-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #d32f2f, #c62828);
+    -fx-border-color: #b71c1c;
+}
+
+/* ===== ESTILOS PARA LA VERSIÓN (StackPane version) ===== */
+.version-container {
+    -fx-cursor: hand;
+    -fx-padding: 8px 0px;
+    -fx-alignment: center;
+    -fx-spacing: 0;
+}
+
+.version-label {
+    -fx-text-fill: #666;
+    -fx-font-size: 10px;
+    -fx-font-style: italic;
+    -fx-font-family: "Meiryo";
+    -fx-padding: 4px 8px;
+    -fx-background-color: transparent;
+    -fx-transition: all 0.3s ease;
+}
+
+.version-line {
+    -fx-stroke: transparent;
+    -fx-stroke-width: 1.5px;
+    -fx-start-x: -40;
+    -fx-end-x: 40;
+    -fx-start-y: 0;
+    -fx-end-y: 0;
+    -fx-transition: all 0.3s ease;
+}
+
+/* Efecto hover en el contenedor */
+.version-container:hover .version-label {
+    -fx-text-fill: #4CAF50;
+    -fx-font-family: "Yu Gothic", "Meiryo", "Hiragino Sans", "Osaka", "Arial";
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-font-style: normal;
+    -fx-effect: dropshadow(gaussian, rgba(221, 237, 215, 0.6), 4, 0.8, 0, 1);
+    -fx-rotate: 3;
+}
+
+.version-container:hover .version-line {
+    -fx-stroke: #4CAF50;
+    -fx-stroke-width: 2px;
+    -fx-start-x: -50;
+    -fx-end-x: 50;
+}
+
+/* ===== ESTILOS PARA EL JUEGO PRINCIPAL ===== */
+.game-container {
+    -fx-background-color: #1a1a1a;
+    -fx-padding: 20px;
+}
+
+/* Panel del tablero */
+.board-panel {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #444;
+    -fx-border-width: 3px;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0, 0, 3);
+}
+
+/* Panel de información lateral */
+.info-panel {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #444;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-padding: 15px;
+    -fx-spacing: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 5, 0, 0, 2);
+}
+
+.info-title {
+    -fx-text-fill: #4CAF50;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.info-value {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* ===== ESTILOS PARA LA PIEZA SIGUIENTE ===== */
+.next-piece-panel {
+    -fx-background-color: #222;
+    -fx-border-color: #666;
+    -fx-border-width: 2px;
+    -fx-border-radius: 3px;
+    -fx-padding: 10px;
+}
+
+.next-piece-title {
+    -fx-text-fill: #ccc;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+/* ===== ESTILOS PARA MENSAJES DE ESTADO ===== */
+.status-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-alignment: center;
+    -fx-padding: 30px;
+}
+
+.status-message {
+    -fx-text-fill: white;
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.pause-message {
+    -fx-text-fill: #FFC107;
+    -fx-effect: dropshadow(gaussian, rgba(255, 193, 7, 0.8), 10, 0.5, 0, 0);
+}
+
+.game-over-message {
+    -fx-text-fill: #f44336;
+    -fx-effect: dropshadow(gaussian, rgba(244, 67, 54, 0.8), 10, 0.5, 0, 0);
+}
+
+.status-submessage {
+    -fx-text-fill: #ccc;
+    -fx-font-size: 16px;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-padding: 10px 0px 0px 0px;
+}
+
+/* ===== ESTILOS PARA CONTROLES Y TECLAS ===== */
+.controls-panel {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #444;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+    -fx-padding: 10px;
+    -fx-spacing: 5px;
+}
+
+.control-item {
+    -fx-text-fill: #ccc;
+    -fx-font-size: 12px;
+    -fx-padding: 2px 0;
+}
+
+.control-key {
+    -fx-text-fill: #4CAF50;
+    -fx-font-weight: bold;
+    -fx-background-color: #333;
+    -fx-background-radius: 3px;
+    -fx-padding: 2px 6px;
+    -fx-border-color: #555;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+}
+
+/* ===== ESTILOS PARA CELDAS DEL TABLERO ===== */
+.cell-empty {
+    -fx-fill: #333;
+    -fx-stroke: #444;
+    -fx-stroke-width: 1px;
+}
+
+.cell-i { -fx-fill: #00BCD4; } /* Cyan */
+.cell-j { -fx-fill: #2196F3; } /* Blue */
+.cell-l { -fx-fill: #FF9800; } /* Orange */
+.cell-o { -fx-fill: #FFEB3B; } /* Yellow */
+.cell-s { -fx-fill: #4CAF50; } /* Green */
+.cell-t { -fx-fill: #9C27B0; } /* Purple */
+.cell-z { -fx-fill: #F44336; } /* Red */
+
+.cell-filled {
+    -fx-stroke: rgba(0, 0, 0, 0.3);
+    -fx-stroke-width: 1px;
+    -fx-effect: innershadow(gaussian, rgba(255, 255, 255, 0.2), 2, 0.5, 0, 0);
+}
+
+
+/* ===== ESTILOS PARA GAMEVIEW ===== */
+
+.game-root {
+    -fx-background-color: #1a1a1a;
+}
+
+.game-container {
+    -fx-background-color: #1a1a1a;
+    -fx-padding: 20px;
+}
+
+.info-panel {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #444;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 5, 0, 0, 2);
+    -fx-min-width: 200px;
+    -fx-pref-width: 200px;
+}
+
+.info-title {
+    -fx-text-fill: #4CAF50;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.info-value {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.menu-button {
+    -fx-background-color: #7d8184;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-pref-width: 150px;
+    -fx-pref-height: 35px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.menu-button:hover {
+    -fx-background-color: #6b6e70;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0.2, 0, 2);
+}
+
+.menu-button:pressed {
+    -fx-background-color: #5a5c5e;
+}
+
+.secondary-button {
+    -fx-border-color: #555;
+    -fx-border-width: 1px;
+}
+
+
+
+
+
+/* ===== EFECTO DE LUZ QUE SIGUE AL MOUSE ===== */
+.base-light {
+    -fx-fill: radial-gradient(
+        focus-angle 0deg, 
+        focus-distance 0%, 
+        center 50% 50%, 
+        radius 100%, 
+        rgba(255, 255, 255, 0.6) 0%, 
+        rgba(255, 255, 255, 0.1) 40%, 
+        transparent 80%
+    );
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.3), 20, 0.5, 0, 0);
+    -fx-opacity: 0.7;
+}
+
+/* ===== ESTILOS PARA BARRAS DE PROGRESO Y NIVEL ===== */
+.progress-bar {
+    -fx-accent: #4CAF50;
+    -fx-background-color: #333;
+    -fx-border-color: #444;
+    -fx-border-width: 1px;
+}
+
+.level-indicator {
+    -fx-background-color: #333;
+    -fx-border-color: #444;
+    -fx-border-width: 1px;
+    -fx-padding: 5px;
+}
+
+.level-text {
+    -fx-text-fill: #4CAF50;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* ===== ESTILOS RESPONSIVOS ===== */
+@media (max-width: 600px) {
+    .game-title {
+        -fx-font-size: 28px;
+    }
+    
+    .menu-button {
+        -fx-pref-width: 180px;
+        -fx-pref-height: 40px;
+        -fx-font-size: 14px;
+    }
+    
+    .info-panel {
+        -fx-padding: 10px;
+    }
+}
+
+/* ===== CLASES DE UTILIDAD ===== */
+.text-center { -fx-alignment: center; }
+.text-left { -fx-alignment: center-left; }
+.text-right { -fx-alignment: center-right; }
+
+.bold { -fx-font-weight: bold; }
+.italic { -fx-font-style: italic; }
+
+.margin-small { -fx-padding: 5px; }
+.margin-medium { -fx-padding: 10px; }
+.margin-large { -fx-padding: 20px; }
+
+.hidden { -fx-opacity: 0; }
+.visible { -fx-opacity: 1; }
+
+/* ===== ANIMACIONES (simuladas con transiciones) ===== */
+.pulsing {
+    -fx-effect: dropshadow(gaussian, rgba(76, 175, 80, 0.6), 10, 0.5, 0, 0);
+}
+
+.flashing {
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.8), 15, 0.7, 0, 0);
+}

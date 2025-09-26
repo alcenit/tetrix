@@ -29,7 +29,7 @@ public class Cell {
     }
     
     public void setFilled(boolean filled) { 
-        System.out.println("DEBUG - setFilled(" + filled + ") llamado");
+       // System.out.println("DEBUG - setFilled(" + filled + ") llamado");
         this.filled = filled; 
     }
     
@@ -38,7 +38,7 @@ public class Cell {
     }
     
     public void setColor(Color color) { 
-        System.out.println("DEBUG - setColor(" + color + ") llamado");
+     //   System.out.println("DEBUG - setColor(" + color + ") llamado");
         this.color = color; 
     }
     
